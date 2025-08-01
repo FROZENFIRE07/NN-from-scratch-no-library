@@ -1,0 +1,83 @@
+import math
+
+def sigmoid(x):
+    return 1/(1+math.exp(-x))
+
+def sigmoid_derivative(output):
+    return output*(1-output)
+
+
+x1 = 0.05
+x2 = 0.10
+
+
+w1 = 0.15
+w2 = 0.20
+w3 = 0.25
+w4 = 0.30
+w5 = 0.40
+w6 = 0.45
+
+# Biases
+b1 = 0.35
+b2 = 0.60
+
+# Target
+target = 0.01
+
+# Learning rate
+lr = 0.8
+
+# Training loop
+for epoch in range(15000):
+
+
+    net_h1 = x1*w1 + x2*w2 + b1
+    out_h1 = sigmoid(net_h1)
+
+    net_h2 = x1*w3 + x2*w4 + b1
+    out_h2 = sigmoid(net_h2)
+
+    net_out = out_h1*w5 + out_h2*w6 + b2
+    out_final = sigmoid(net_out)
+
+
+    err = 0.5 * (target - out_final) ** 2
+
+
+    delta_out = (out_final - target) * sigmoid_derivative(out_final)
+    dw5 = delta_out * out_h1
+    dw6 = delta_out * out_h2
+    db2 = delta_out
+
+
+    w5 -= lr * dw5
+    w6 -= lr * dw6
+    b2 -= lr * db2
+
+
+    delta_h1 = sigmoid_derivative(out_h1) * delta_out * w5
+    delta_h2 = sigmoid_derivative(out_h2) * delta_out * w6
+
+    dw1 = delta_h1 * x1
+    dw2 = delta_h1 * x2
+    dw3 = delta_h2 * x1
+    dw4 = delta_h2 * x2
+    db1 = delta_h1 + delta_h2
+
+
+    w1 -= lr * dw1
+    w2 -= lr * dw2
+    w3 -= lr * dw3
+    w4 -= lr * dw4
+    b1 -= lr * db1
+
+
+    if epoch % 100 == 0 or epoch == 999:
+        print(f"Epoch {epoch}, Output: {out_final:.6f}, Error: {err:.6f}")
+
+
+    if err < 0.0000001:
+        print(f"Stopping early at epoch {epoch}, final error: {err:.8f}")
+        break
+print("w1=",w1,"w2=",w2,"w3=",w3,"w4=",w4,"w5=",w5,"w6=",w6)
